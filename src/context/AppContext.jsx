@@ -5,231 +5,221 @@ const initialState = {
   // UI state
   sidebarOpen: true,
   loading: false,
+  error: null,
   notifications: [],
   
-  // Entity states
-  students: {
-    list: [],
-    selected: null,
-    loading: false,
-    error: null
-  },
-  courses: {
-    list: [],
-    selected: null,
-    loading: false,
-    error: null
-  },
-  departments: {
-    list: [],
-    selected: null,
-    loading: false,
-    error: null
-  },
-  users: {
-    list: [],
-    selected: null,
-    loading: false,
-    error: null
-  },
-  fees: {
-    list: [],
-    selected: null,
-    loading: false,
-    error: null
-  },
-  exams: {
-    list: [],
-    selected: null,
-    loading: false,
-    error: null
-  },
-  guardians: {
-    list: [],
-    selected: null,
-    loading: false,
-    error: null
-  },
-  admissions: {
-    list: [],
-    selected: null,
-    loading: false,
-    error: null
-  },
-  hostels: {
-    list: [],
-    selected: null,
-    loading: false,
-    error: null
-  },
-  rooms: {
-    list: [],
-    selected: null,
-    loading: false,
-    error: null
-  },
-  hostelAllocations: {
-    list: [],
-    selected: null,
-    loading: false,
-    error: null
-  },
-  library: {
-    list: [],
-    selected: null,
-    loading: false,
-    error: null
-  },
-  bookIssues: {
-    list: [],
-    selected: null,
-    loading: false,
-    error: null
-  },
-  results: {
-    list: [],
-    selected: null,
-    loading: false,
-    error: null
-  },
-  userRoles: {
-    list: [],
-    selected: null,
-    loading: false,
-    error: null
-  },
-  contactDetails: {
-    list: [],
-    selected: null,
-    loading: false,
-    error: null
-  }
-};
-
-// Action types
-export const actionTypes = {
-  // UI actions
-  TOGGLE_SIDEBAR: 'TOGGLE_SIDEBAR',
-  SET_LOADING: 'SET_LOADING',
-  ADD_NOTIFICATION: 'ADD_NOTIFICATION',
-  REMOVE_NOTIFICATION: 'REMOVE_NOTIFICATION',
-  
-  // Generic entity actions
-  SET_ENTITY_LOADING: 'SET_ENTITY_LOADING',
-  SET_ENTITY_ERROR: 'SET_ENTITY_ERROR',
-  SET_ENTITY_LIST: 'SET_ENTITY_LIST',
-  SET_ENTITY_SELECTED: 'SET_ENTITY_SELECTED',
-  ADD_ENTITY_ITEM: 'ADD_ENTITY_ITEM',
-  UPDATE_ENTITY_ITEM: 'UPDATE_ENTITY_ITEM',
-  REMOVE_ENTITY_ITEM: 'REMOVE_ENTITY_ITEM',
-  CLEAR_ENTITY_ERROR: 'CLEAR_ENTITY_ERROR'
+  // Entity data - simplified structure
+  students: [],
+  courses: [],
+  departments: [],
+  users: [],
+  fees: [],
+  exams: [],
+  guardians: [],
+  admissions: [],
+  hostels: [],
+  rooms: [],
+  hostelAllocations: [],
+  library: [],
+  bookIssues: [],
+  results: [],
+  userRoles: [],
+  contactDetails: []
 };
 
 // Reducer function
 const appReducer = (state, action) => {
   switch (action.type) {
-    case actionTypes.TOGGLE_SIDEBAR:
+    case 'TOGGLE_SIDEBAR':
+      return { ...state, sidebarOpen: !state.sidebarOpen };
+
+    case 'SET_LOADING':
+      return { ...state, loading: action.payload };
+
+    case 'SET_ERROR':
+      return { ...state, error: action.payload };
+
+    case 'ADD_NOTIFICATION':
       return {
         ...state,
-        sidebarOpen: !state.sidebarOpen
+        notifications: [...state.notifications, { id: Date.now(), ...action.payload }]
       };
 
-    case actionTypes.SET_LOADING:
-      return {
-        ...state,
-        loading: action.payload
-      };
-
-    case actionTypes.ADD_NOTIFICATION:
-      return {
-        ...state,
-        notifications: [...state.notifications, {
-          id: Date.now(),
-          ...action.payload
-        }]
-      };
-
-    case actionTypes.REMOVE_NOTIFICATION:
+    case 'REMOVE_NOTIFICATION':
       return {
         ...state,
         notifications: state.notifications.filter(n => n.id !== action.payload)
       };
 
-    case actionTypes.SET_ENTITY_LOADING:
+    // Entity actions
+    case 'SET_STUDENTS':
+      return { ...state, students: action.payload };
+    case 'ADD_STUDENT':
+      return { ...state, students: [...state.students, action.payload] };
+    case 'UPDATE_STUDENT':
       return {
         ...state,
-        [action.entity]: {
-          ...state[action.entity],
-          loading: action.payload
-        }
+        students: state.students.map(item => 
+          item.student_id === action.payload.id ? action.payload.data : item
+        )
+      };
+    case 'REMOVE_STUDENT':
+      return {
+        ...state,
+        students: state.students.filter(item => item.student_id !== action.payload)
       };
 
-    case actionTypes.SET_ENTITY_ERROR:
+    case 'SET_COURSES':
+      return { ...state, courses: action.payload };
+    case 'ADD_COURSE':
+      return { ...state, courses: [...state.courses, action.payload] };
+    case 'UPDATE_COURSE':
       return {
         ...state,
-        [action.entity]: {
-          ...state[action.entity],
-          error: action.payload,
-          loading: false
-        }
+        courses: state.courses.map(item => 
+          item.course_id === action.payload.id ? action.payload.data : item
+        )
+      };
+    case 'REMOVE_COURSE':
+      return {
+        ...state,
+        courses: state.courses.filter(item => item.course_id !== action.payload)
       };
 
-    case actionTypes.SET_ENTITY_LIST:
+    case 'SET_DEPARTMENTS':
+      return { ...state, departments: action.payload };
+    case 'ADD_DEPARTMENT':
+      return { ...state, departments: [...state.departments, action.payload] };
+    case 'UPDATE_DEPARTMENT':
       return {
         ...state,
-        [action.entity]: {
-          ...state[action.entity],
-          list: action.payload,
-          loading: false,
-          error: null
-        }
+        departments: state.departments.map(item => 
+          item.dept_id === action.payload.id ? action.payload.data : item
+        )
+      };
+    case 'REMOVE_DEPARTMENT':
+      return {
+        ...state,
+        departments: state.departments.filter(item => item.dept_id !== action.payload)
       };
 
-    case actionTypes.SET_ENTITY_SELECTED:
+    case 'SET_USERS':
+      return { ...state, users: action.payload };
+    case 'ADD_USER':
+      return { ...state, users: [...state.users, action.payload] };
+    case 'UPDATE_USER':
       return {
         ...state,
-        [action.entity]: {
-          ...state[action.entity],
-          selected: action.payload
-        }
+        users: state.users.map(item => 
+          item.user_id === action.payload.id ? action.payload.data : item
+        )
+      };
+    case 'REMOVE_USER':
+      return {
+        ...state,
+        users: state.users.filter(item => item.user_id !== action.payload)
       };
 
-    case actionTypes.ADD_ENTITY_ITEM:
+    case 'SET_FEES':
+      return { ...state, fees: action.payload };
+    case 'ADD_FEES':
+      return { ...state, fees: [...state.fees, action.payload] };
+    case 'UPDATE_FEES':
       return {
         ...state,
-        [action.entity]: {
-          ...state[action.entity],
-          list: [...state[action.entity].list, action.payload]
-        }
+        fees: state.fees.map(item => 
+          item.fees_id === action.payload.id ? action.payload.data : item
+        )
+      };
+    case 'REMOVE_FEES':
+      return {
+        ...state,
+        fees: state.fees.filter(item => item.fees_id !== action.payload)
       };
 
-    case actionTypes.UPDATE_ENTITY_ITEM:
+    case 'SET_EXAMS':
+      return { ...state, exams: action.payload };
+    case 'ADD_EXAM':
+      return { ...state, exams: [...state.exams, action.payload] };
+    case 'UPDATE_EXAM':
       return {
         ...state,
-        [action.entity]: {
-          ...state[action.entity],
-          list: state[action.entity].list.map(item =>
-            item.id === action.payload.id ? action.payload : item
-          )
-        }
+        exams: state.exams.map(item => 
+          item.exam_id === action.payload.id ? action.payload.data : item
+        )
+      };
+    case 'REMOVE_EXAM':
+      return {
+        ...state,
+        exams: state.exams.filter(item => item.exam_id !== action.payload)
       };
 
-    case actionTypes.REMOVE_ENTITY_ITEM:
+    case 'SET_GUARDIANS':
+      return { ...state, guardians: action.payload };
+    case 'ADD_GUARDIAN':
+      return { ...state, guardians: [...state.guardians, action.payload] };
+    case 'UPDATE_GUARDIAN':
       return {
         ...state,
-        [action.entity]: {
-          ...state[action.entity],
-          list: state[action.entity].list.filter(item => item.id !== action.payload)
-        }
+        guardians: state.guardians.map(item => 
+          item.guardian_id === action.payload.id ? action.payload.data : item
+        )
+      };
+    case 'REMOVE_GUARDIAN':
+      return {
+        ...state,
+        guardians: state.guardians.filter(item => item.guardian_id !== action.payload)
       };
 
-    case actionTypes.CLEAR_ENTITY_ERROR:
+    case 'SET_ADMISSIONS':
+      return { ...state, admissions: action.payload };
+    case 'ADD_ADMISSION':
+      return { ...state, admissions: [...state.admissions, action.payload] };
+    case 'UPDATE_ADMISSION':
       return {
         ...state,
-        [action.entity]: {
-          ...state[action.entity],
-          error: null
-        }
+        admissions: state.admissions.map(item => 
+          item.admission_id === action.payload.id ? action.payload.data : item
+        )
+      };
+    case 'REMOVE_ADMISSION':
+      return {
+        ...state,
+        admissions: state.admissions.filter(item => item.admission_id !== action.payload)
+      };
+
+    case 'SET_HOSTELS':
+      return { ...state, hostels: action.payload };
+    case 'ADD_HOSTEL':
+      return { ...state, hostels: [...state.hostels, action.payload] };
+    case 'UPDATE_HOSTEL':
+      return {
+        ...state,
+        hostels: state.hostels.map(item => 
+          item.hostel_id === action.payload.id ? action.payload.data : item
+        )
+      };
+    case 'REMOVE_HOSTEL':
+      return {
+        ...state,
+        hostels: state.hostels.filter(item => item.hostel_id !== action.payload)
+      };
+
+    case 'SET_LIBRARY':
+      return { ...state, library: action.payload };
+    case 'ADD_BOOK':
+      return { ...state, library: [...state.library, action.payload] };
+    case 'UPDATE_BOOK':
+      return {
+        ...state,
+        library: state.library.map(item => 
+          item.book_id === action.payload.id ? action.payload.data : item
+        )
+      };
+    case 'REMOVE_BOOK':
+      return {
+        ...state,
+        library: state.library.filter(item => item.book_id !== action.payload)
       };
 
     default:
@@ -244,116 +234,14 @@ const AppContext = createContext();
 export const AppProvider = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
 
-  // Action creators
-  const actions = {
-    // UI actions
-    toggleSidebar: () => dispatch({ type: actionTypes.TOGGLE_SIDEBAR }),
-    
-    setLoading: (loading) => dispatch({ 
-      type: actionTypes.SET_LOADING, 
-      payload: loading 
-    }),
-    
-    addNotification: (notification) => dispatch({ 
-      type: actionTypes.ADD_NOTIFICATION, 
-      payload: notification 
-    }),
-    
-    removeNotification: (id) => dispatch({ 
-      type: actionTypes.REMOVE_NOTIFICATION, 
-      payload: id 
-    }),
-
-    // Generic entity actions
-    setEntityLoading: (entity, loading) => dispatch({
-      type: actionTypes.SET_ENTITY_LOADING,
-      entity,
-      payload: loading
-    }),
-
-    setEntityError: (entity, error) => dispatch({
-      type: actionTypes.SET_ENTITY_ERROR,
-      entity,
-      payload: error
-    }),
-
-    setEntityList: (entity, list) => dispatch({
-      type: actionTypes.SET_ENTITY_LIST,
-      entity,
-      payload: list
-    }),
-
-    setEntitySelected: (entity, item) => dispatch({
-      type: actionTypes.SET_ENTITY_SELECTED,
-      entity,
-      payload: item
-    }),
-
-    addEntityItem: (entity, item) => dispatch({
-      type: actionTypes.ADD_ENTITY_ITEM,
-      entity,
-      payload: item
-    }),
-
-    updateEntityItem: (entity, item) => dispatch({
-      type: actionTypes.UPDATE_ENTITY_ITEM,
-      entity,
-      payload: item
-    }),
-
-    removeEntityItem: (entity, id) => dispatch({
-      type: actionTypes.REMOVE_ENTITY_ITEM,
-      entity,
-      payload: id
-    }),
-
-    clearEntityError: (entity) => dispatch({
-      type: actionTypes.CLEAR_ENTITY_ERROR,
-      entity
-    }),
-
-    // Notification helpers
-    showSuccess: (message) => {
-      actions.addNotification({
-        type: 'success',
-        message,
-        duration: 3000
-      });
-    },
-
-    showError: (message) => {
-      actions.addNotification({
-        type: 'error',
-        message,
-        duration: 5000
-      });
-    },
-
-    showInfo: (message) => {
-      actions.addNotification({
-        type: 'info',
-        message,
-        duration: 3000
-      });
-    },
-
-    showWarning: (message) => {
-      actions.addNotification({
-        type: 'warning',
-        message,
-        duration: 4000
-      });
-    }
-  };
-
   return (
-    <AppContext.Provider value={{ state, actions }}>
+    <AppContext.Provider value={{ state, dispatch }}>
       {children}
     </AppContext.Provider>
   );
 };
 
-// Custom hook to use the app context
+// Custom hook to use the context
 export const useAppContext = () => {
   const context = useContext(AppContext);
   if (!context) {
